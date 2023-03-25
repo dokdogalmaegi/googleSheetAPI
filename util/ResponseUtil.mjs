@@ -1,4 +1,4 @@
-export const RESPONSE = {
+const RESPONSE = {
     SUCCESS: 'success',
     FAIL: 'fail'
 }
