@@ -14,16 +14,42 @@ app.use(express.urlencoded( {extended: false} ));
 
 app.post('/', async (req, res) => {
     const { start, end } = req.body;
-    
     if (!isCell(start) || !isCell(end)) {
         const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
         return res.json(notCellLocationValue.json);
     }
 
     const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
-    const returnCellValue = new SuccessResponseData(`Success select ${start}:${end}`, await googleSheet.getValuesOf(start, end));
-    return res.json(returnCellValue.json);
+    try {
+        const returnCellValue = new SuccessResponseData(`Success select ${start}:${end}`, await googleSheet.getValuesOf(start, end));
+
+        return res.json(returnCellValue.json);
+    } catch(error) {
+        const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
+
+        return res.json(retrunFailValue.json);
+    }
 });
+
+app.post('/:sheetId', async (req, res) => {
+    const { params: { sheetId }, body: { start, end } } = req;
+    if (!isCell(start) || !isCell(end)) {
+        const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
+
+        return res.json(notCellLocationValue.json);
+    }
+
+    const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
+    try {
+        const returnCellValue = new SuccessResponseData(`Success select ${start}:${end}`, await googleSheet.getValuesOf(start, end, sheetId));
+
+        return res.json(returnCellValue.json);
+    } catch(error) {
+        const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
+
+        return res.json(retrunFailValue.json);
+    } 
+})
 
 const server = app.listen(port, () => {
     console.log(`server on ${port}`);
