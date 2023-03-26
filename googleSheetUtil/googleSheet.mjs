@@ -45,8 +45,6 @@ export class GoogleSheet {
             range = `${sheetId}!${range}`;
         }
 
-        console.log(range);
-
         return await this.#getValueOf(range);
     }
 
@@ -106,9 +104,9 @@ export class GoogleSheet {
         await this.#appendValuesToCell(range, resource);
     }
 
-    async appendValueMany(start, end, values) {
+    async appendValueMany(start, end, values, options = { plusNumber: 0 }) {
         const lastNumber = await this.#getLastNumberByCell(start);
-        const range = `${start}${lastNumber}:${end}${lastNumber}`;
+        const range = `${start}${lastNumber + options.plusNumber}:${end}${lastNumber + options.plusNumber}`;
         const resource = {
             values: [
                 values

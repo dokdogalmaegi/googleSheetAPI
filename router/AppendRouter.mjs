@@ -7,7 +7,6 @@ import { isCell } from '../util/ExcelUtil.mjs';
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
 const router = express.Router();
-const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
 
 router.post('/one', async (req, res) => {
     const { cell, value } = req.body.data;
@@ -18,6 +17,7 @@ router.post('/one', async (req, res) => {
     }
 
     try {
+        const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
         await googleSheet.appendValueToCell(cell, value);
 
         const returnSuccessValue = new SuccessResponseData(`Success append ${value}`, 'Success');
@@ -32,6 +32,7 @@ router.post('/one', async (req, res) => {
 
 router.post('/many', async (req, res) => {
     const { start: startAlphabet, end: endAlphabet, values } = req.body.data;
+    const { plusNumber } = req.query;
 
     if (!isCell(`${startAlphabet}1`) || !isCell(`${endAlphabet}1`)) {
         const notCellLocationValue = new FailResponseData('Must be start or end variable is cell alphabet\nEx) A', new Error('Must be start or end variable is cell alphabet'));
@@ -39,7 +40,12 @@ router.post('/many', async (req, res) => {
     }
 
     try {
-        await googleSheet.appendValueMany(startAlphabet, endAlphabet, values);
+        const options = {
+            plusNumber: Number(plusNumber)
+        };
+
+        const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
+        await googleSheet.appendValueMany(startAlphabet, endAlphabet, values, options);
 
         const returnSuccessValue = new SuccessResponseData(`Success append ${startAlphabet} ~ ${endAlphabet}`, 'Success');
         return res.json(returnSuccessValue.json);

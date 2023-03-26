@@ -1,5 +1,6 @@
 import express from 'express';
 
+import setUpRouter from './router/SetUpRouter.mjs';
 import selectRouter from './router/SelectRouter.mjs';
 import insertRouter from './router/InsertRouter.mjs';
 import appendRouter from './router/AppendRouter.mjs';
@@ -9,6 +10,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded( {extended: false} ));
+
+app.use('/setUp', setUpRouter);
 
 app.use('/select', selectRouter);
 app.use('/insert', insertRouter);
