@@ -4,6 +4,17 @@ import apiAuthJson from '../config/apiAuth.json' assert { type: 'json' };
 
 const { client_email: clientEmail, private_key: privateKey } = apiAuthJson;
 
+const ValueInputOption = {
+    INPUT_VALUE_OPTION_UNSPECIFIED: 'INPUT_VALUE_OPTION_UNSPECIFIED',
+    RAW: 'RAW',
+    USER_ENTERED: 'USER_ENTERED'
+};
+
+const InsertDataOption = {
+    OVERWRITE: 'OVERWRITE',
+    INSERT_ROWS: 'INSERT_ROWS'
+}
+
 const SHEET_API_URL = 'https://www.googleapis.com/auth/spreadsheets';
 export class GoogleSheet {
     #sheetApi
@@ -28,7 +39,7 @@ export class GoogleSheet {
      * @returns String Value from Cell
      */
     async getValuesOf(startCell, endCell, sheetId = '') {
-        let range = `${startCell.toUpperCase()}:${endCell.toUpperCase()}`;
+        let range = `${startCell}:${endCell}`;
 
         if (sheetId.length > 0) {
             range = `${sheetId}!${range}`;
@@ -58,5 +69,50 @@ export class GoogleSheet {
         });
 
         return values.length;
+    }
+
+    async insertValueToCell(location, value) {
+        const range = `${location}:${location}`;
+        const resource = {
+            values: [
+                [
+                    value
+                ]
+            ]
+        };
+
+        await this.#insertValueToCell(range, resource);
+    }
+
+    async #insertValueToCell(range, resource) {
+        await this.#sheetApi.spreadsheets.values.update({
+            spreadsheetId: this.#spreadSheetId,
+            valueInputOption: ValueInputOption.RAW,
+            range,
+            resource
+        });
+    }
+
+    async appendValueToCell(cell, value) {
+        const range = `${cell}1:${cell}${await this.#getLastNumberByCell(cell)}`;
+        const resource = {
+            values: [
+                [
+                    value
+                ]
+            ]
+        };
+
+        await this.#appendValueToCell(range, resource);
+    }
+
+    async #appendValueToCell(range, resource) {
+        await this.#sheetApi.spreadsheets.values.append({
+            spreadsheetId: this.#spreadSheetId,
+            insertDataOption: InsertDataOption.INSERT_ROWS,
+            valueInputOption: ValueInputOption.RAW,
+            range,
+            resource
+        });
     }
 }
