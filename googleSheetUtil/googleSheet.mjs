@@ -20,8 +20,15 @@ export class GoogleSheet {
         this.#spreadSheetId = spreadSheetId;
     }
 
+    /**
+     * Cell의 범위를 매개 변수로 값을 조회해 반환합니다.
+     * @param {String} startCell 
+     * @param {String} endCell 
+     * @param {String} sheetId 
+     * @returns String Value from Cell
+     */
     async getValuesOf(startCell, endCell, sheetId = '') {
-        let range = `${startCell}:${endCell}`;
+        let range = `${startCell.toUpperCase()}:${endCell.toUpperCase()}`;
 
         if (sheetId.length > 0) {
             range = `${sheetId}!${range}`;
@@ -38,11 +45,18 @@ export class GoogleSheet {
             range
         });
 
-        console.log(await this.#sheetApi.spreadsheets.values.get({
-            spreadsheetId: this.#spreadSheetId,
-            range,
-        }));
-
         return values;
+    }
+
+    async #getLastNumberByCell(cell = 'A') {
+        const START_NUMBER = 1;
+        const range = `${cell}${START_NUMBER}:${cell}`;
+
+        const { data: { values } } = await this.#sheetApi.spreadsheets.values.get({
+            spreadsheetId: this.#spreadSheetId,
+            range
+        });
+
+        return values.length;
     }
 }

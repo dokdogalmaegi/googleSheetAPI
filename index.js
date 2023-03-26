@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded( {extended: false} ));
 
-app.post('/', async (req, res) => {
+app.post('/select', async (req, res) => {
     const { start, end } = req.body;
     if (!isCell(start) || !isCell(end)) {
         const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
@@ -25,13 +25,14 @@ app.post('/', async (req, res) => {
 
         return res.json(returnCellValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
+        const retrunFailValue = new FailResponseData(`Fail select ${start}:${end}`, error);
 
+        console.log(error);
         return res.json(retrunFailValue.json);
     }
 });
 
-app.post('/:sheetId', async (req, res) => {
+app.post('/select/getBy/:sheetId', async (req, res) => {
     const { params: { sheetId }, body: { start, end } } = req;
     if (!isCell(start) || !isCell(end)) {
         const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
@@ -47,9 +48,10 @@ app.post('/:sheetId', async (req, res) => {
     } catch(error) {
         const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
 
+        console.log(error);
         return res.json(retrunFailValue.json);
     } 
-})
+});
 
 const server = app.listen(port, () => {
     console.log(`server on ${port}`);
