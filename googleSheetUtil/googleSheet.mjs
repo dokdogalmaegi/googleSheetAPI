@@ -103,10 +103,22 @@ export class GoogleSheet {
             ]
         };
 
-        await this.#appendValueToCell(range, resource);
+        await this.#appendValuesToCell(range, resource);
     }
 
-    async #appendValueToCell(range, resource) {
+    async appendValueMany(start, end, values) {
+        const lastNumber = await this.#getLastNumberByCell(start);
+        const range = `${start}${lastNumber}:${end}${lastNumber}`;
+        const resource = {
+            values: [
+                values
+            ]
+        };
+
+        await this.#appendValuesToCell(range, resource);
+    }
+
+    async #appendValuesToCell(range, resource) {
         await this.#sheetApi.spreadsheets.values.append({
             spreadsheetId: this.#spreadSheetId,
             insertDataOption: InsertDataOption.INSERT_ROWS,
