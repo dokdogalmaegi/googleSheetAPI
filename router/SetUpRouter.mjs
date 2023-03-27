@@ -42,9 +42,8 @@ router.post('/header', async (req, res) => {
 
     try {
         const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
-        await googleSheet.getHeaderColumnFromTwoRows(startOfHeaderCell, endOfHeaderCell);
-
-        const returnSuccessData = new SuccessResponseData(`Success select header column list`, 'Success');
+        const returnSuccessData = new SuccessResponseData(`Success select header column list`, await googleSheet.getHeaderColumnFromTwoRows(startOfHeaderCell, endOfHeaderCell));
+        
         return res.json(returnSuccessData.json);
     } catch(error) {
         const retrunFailValue = new FailResponseData(`Fail select header column list`, error);

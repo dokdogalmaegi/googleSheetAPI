@@ -131,7 +131,7 @@ export class GoogleSheet {
 
         const [ firstRows, secondRows ] = await this.#getValueOf(range);
 
-        const headerColumn = [];ç
+        const headerColumn = [];
         for (let idx = 0; idx < firstRows.length; idx++) {
             const secondRowValue = secondRows[idx];
 
