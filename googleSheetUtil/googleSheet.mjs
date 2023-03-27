@@ -161,7 +161,6 @@ export class GoogleSheet {
             }
         }
 
-        console.log(headerColumn);
         return headerColumn;
     }
 }
