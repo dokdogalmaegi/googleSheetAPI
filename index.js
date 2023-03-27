@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
+import { validationWhiteList } from "./util/WhiteListUtil.mjs";
+
 import setUpRouter from './router/SetUpRouter.mjs';
 import selectRouter from './router/SelectRouter.mjs';
 import insertRouter from './router/InsertRouter.mjs';
@@ -16,6 +18,8 @@ app.use(cors({
     credentials: true,
     methods: 'GET, POST'
 }));
+
+app.use(validationWhiteList);
 
 app.enable('trust proxy');
 

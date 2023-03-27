@@ -4,12 +4,39 @@ import path from 'path';
 const __dirname = path.resolve();
 
 import sheetInfo from '../config/sheetInfo.json' assert { type: 'json' };
+import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
 const router = express.Router();
+
+router.post('/addWhiteList', (req, res) => {
+    const { value } = req.body.data;
+
+    try {
+        const isExistsIp = ipWhiteList.whiteList.filter(whiteIp => whiteIp === value);
+        if (isExistsIp.length > 0) {
+            throw Error('Exists ip in white list');
+        } 
+
+        ipWhiteList.whiteList.push(value);
+        fs.writeFile(`${__dirname}/config/ipWhiteList.json`, JSON.stringify(ipWhiteList), (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+        
+        const returnSuccessData = new SuccessResponseData(`Success set up new white list`, value);
+        return res.json(returnSuccessData.json);
+    } catch(error) {
+        console.log(error);
+
+        const returnFailData = new FailResponseData(`Fail set up new white list`, error);
+        return res.json(returnFailData.json);
+    }
+});
 
 router.post('/spreadSheet', (req, res) => {
     const { value } = req.body.data;
@@ -33,7 +60,6 @@ router.post('/spreadSheet', (req, res) => {
 });
 
 router.post('/header', async (req, res) => {
-    console.log(req.headers['x-forwarded-for'] ||  req.socket.remoteAddress);
     const { start: startOfHeaderCell, end: endOfHeaderCell } = req.body.data;
 
     if (!isCell(startOfHeaderCell) || !isCell(endOfHeaderCell)) {
