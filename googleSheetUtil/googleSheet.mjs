@@ -136,15 +136,13 @@ export class GoogleSheet {
             const secondRowValue = secondRows[idx];
 
             let rowSpan = 1;
-            let childs = [];
-            if (secondRowValue !== undefined) {
-                if (secondRowValue.length === 0) {
-                    rowSpan = 2;
-                }
+            if (secondRowValue === undefined || secondRowValue.length === 0) {
+                rowSpan = 2;   
+            }
 
-                if (secondRowValue.length > 0 && rowSpan === 1) {
-                    childs = [secondRowValue];
-                }
+            let childs = [];
+            if (secondRowValue !== undefined && secondRowValue.length > 0 && rowSpan === 1) {
+                childs = [secondRowValue];
             }
 
             const firstRowValue = firstRows[idx];
@@ -163,6 +161,7 @@ export class GoogleSheet {
             }
         }
 
+        console.log(headerColumn);
         return headerColumn;
     }
 }
