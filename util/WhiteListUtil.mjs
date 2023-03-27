@@ -3,10 +3,10 @@ import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 export function validationWhiteList(req, res, next) {
     const ipAddress = (req.headers['x-forwarded-for'] ||  req.socket.remoteAddress).replaceAll(':', '').replaceAll('f', '');
     try {
-        console.log(ipAddress);
         const isExists = ipWhiteList.whiteList.filter(whiteAddress => whiteAddress === ipAddress);
 
         if (isExists.length === 0) {
+            console.log(ipAddress);
             throw Error('Not exists ip address in white list');
         }
     } catch(error) {
