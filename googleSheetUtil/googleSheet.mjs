@@ -125,4 +125,44 @@ export class GoogleSheet {
             resource
         });
     }
+
+    async getHeaderColumnFromTwoRows(start = 'A1', end = 'AZ2') {
+        const range = `${start}:${end}`;
+
+        const [ firstRows, secondRows ] = await this.#getValueOf(range);
+
+        const headerColumn = [];ç
+        for (let idx = 0; idx < firstRows.length; idx++) {
+            const secondRowValue = secondRows[idx];
+
+            let rowSpan = 1;
+            let childs = [];
+            if (secondRowValue !== undefined) {
+                if (secondRowValue.length === 0) {
+                    rowSpan = 2;
+                }
+
+                if (secondRowValue.length > 0 && rowSpan === 1) {
+                    childs = [secondRowValue];
+                }
+            }
+
+            const firstRowValue = firstRows[idx];
+            if (firstRowValue.length === 0) {
+                const notNullBeforeColumnIndex = headerColumn.length - 1;
+                
+                headerColumn[notNullBeforeColumnIndex].colSpan = headerColumn[notNullBeforeColumnIndex].colSpan + 1;
+                headerColumn[notNullBeforeColumnIndex].childs.push(childs[0]);
+            } else {
+                headerColumn.push({
+                    value: firstRowValue.replace('\n', ' '),
+                    rowSpan,
+                    colSpan: 1,
+                    childs
+                });   
+            }
+        }
+
+        return headerColumn;
+    }
 }

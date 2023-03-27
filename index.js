@@ -13,6 +13,8 @@ app.use(express.json());
 app.use(express.urlencoded( {extended: false} ));
 app.use(cors());
 
+app.enable('trust proxy');
+
 app.use('/setUp', setUpRouter);
 
 app.use('/select', selectRouter);
