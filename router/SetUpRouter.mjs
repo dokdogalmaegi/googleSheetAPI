@@ -33,6 +33,7 @@ router.post('/spreadSheet', (req, res) => {
 });
 
 router.post('/header', async (req, res) => {
+    console.log(req.headers['x-forwarded-for'] ||  req.socket.remoteAddress);
     const { start: startOfHeaderCell, end: endOfHeaderCell } = req.body.data;
 
     if (!isCell(startOfHeaderCell) || !isCell(endOfHeaderCell)) {
@@ -43,7 +44,7 @@ router.post('/header', async (req, res) => {
     try {
         const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
         const returnSuccessData = new SuccessResponseData(`Success select header column list`, await googleSheet.getHeaderColumnFromTwoRows(startOfHeaderCell, endOfHeaderCell));
-        
+
         return res.json(returnSuccessData.json);
     } catch(error) {
         const retrunFailValue = new FailResponseData(`Fail select header column list`, error);

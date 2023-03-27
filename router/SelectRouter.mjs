@@ -9,8 +9,6 @@ import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs'
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    console.log(req.headers['x-forwarded-for'] ||  req.socket.remoteAddress);
-
     const { start, end } = req.body;
     if (!isCell(start) || !isCell(end)) {
         const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
