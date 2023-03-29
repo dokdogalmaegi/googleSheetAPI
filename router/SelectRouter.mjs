@@ -73,7 +73,6 @@ router.post('/getAllRows', async (req, res) => {
                 }
             }
         });
-        console.log(filterHeaderColumn);
 
         const allCellValues = await googleSheet.getValuesOf(startCell, endAlphabet);
         const rows =  allCellValues.map((row) => {
