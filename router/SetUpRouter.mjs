@@ -12,6 +12,11 @@ import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs'
 
 const router = express.Router();
 
+router.post('/alive', (req, res) => {
+    const returnSuccessData = new SuccessResponseData(`Success`, `Alive`);
+    return res.json(returnSuccessData.json);
+})
+
 router.post('/addWhiteList', (req, res) => {
     const { value } = req.body.data;
 
