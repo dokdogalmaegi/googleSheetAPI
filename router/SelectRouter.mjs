@@ -58,9 +58,35 @@ router.post('/getAllRows', async (req, res) => {
     }
 
     const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
-    try {
-        const returnCellValue = new SuccessResponseData(`Success select allRows}`, await googleSheet.getValuesOf(startCell, endAlphabet));
+    try {        
+        const headerColumn = await googleSheet.getHeaderColumnFromTwoRows();
+        
+        const filterHeaderColumn = [];
+        headerColumn.forEach((header) => {
+            if (header.childs.length > 0) {
+                header.childs.forEach((child) => {
+                    filterHeaderColumn.push(header.value+child);
+                });
+            } else {
+                for (let i = 0; i < header.colSpan; i++) {
+                    filterHeaderColumn.push(header.value);
+                }
+            }
+        });
+        console.log(filterHeaderColumn);
 
+        const allCellValues = await googleSheet.getValuesOf(startCell, endAlphabet);
+        const rows =  allCellValues.map((row) => {
+            row = row.map((cell, cellIdx) => {
+                return {
+                    value: cell,
+                    id: filterHeaderColumn[cellIdx]
+                }
+            });
+            return row;
+        });
+        
+        const returnCellValue = new SuccessResponseData(`Success select allRows}`, rows);
         return res.json(returnCellValue.json);
     } catch(error) {
         const retrunFailValue = new FailResponseData(`Fail select allRows`, error);
