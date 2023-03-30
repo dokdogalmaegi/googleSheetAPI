@@ -77,9 +77,21 @@ router.post('/getAllRows', async (req, res) => {
         const allCellValues = await googleSheet.getValuesOf(startCell, endAlphabet);
         const rows =  allCellValues.map((row) => {
             row = row.map((cell, cellIdx) => {
+                const ALAPABET_A_ASCII = 'A'.charCodeAt(0);
+                const ALAPABET_Z_ASCII = 'Z'.charCodeAt(0);
+
+                const cellColumnIdAlapabetASCII = ALAPABET_A_ASCII + cellIdx;
+                let cellColumnIdAlapabet = '';
+                if (cellColumnIdAlapabetASCII > ALAPABET_Z_ASCII) {
+                    cellColumnIdAlapabet = `A${String.fromCharCode(ALAPABET_A_ASCII + (cellColumnIdAlapabetASCII - ALAPABET_Z_ASCII - 1))}`
+                } else {
+                    cellColumnIdAlapabet = String.fromCharCode(cellColumnIdAlapabetASCII);
+                }
+
                 return {
                     value: cell,
-                    id: filterHeaderColumn[cellIdx]
+                    id: filterHeaderColumn[cellIdx],
+                    cellId: `${cellColumnIdAlapabet}${cellIdx}`
                 }
             });
             return row;
