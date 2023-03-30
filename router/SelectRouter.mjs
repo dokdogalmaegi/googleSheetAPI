@@ -75,7 +75,7 @@ router.post('/getAllRows', async (req, res) => {
         });
 
         const allCellValues = await googleSheet.getValuesOf(startCell, endAlphabet);
-        const rows =  allCellValues.map((row) => {
+        const rows =  allCellValues.map((row, rowIdx) => {
             row = row.map((cell, cellIdx) => {
                 const ALAPABET_A_ASCII = 'A'.charCodeAt(0);
                 const ALAPABET_Z_ASCII = 'Z'.charCodeAt(0);
@@ -91,7 +91,7 @@ router.post('/getAllRows', async (req, res) => {
                 return {
                     value: cell,
                     id: filterHeaderColumn[cellIdx],
-                    cellId: `${cellColumnIdAlapabet}${cellIdx}`
+                    cellId: `${cellColumnIdAlapabet}${rowIdx}`
                 }
             });
             return row;
