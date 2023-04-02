@@ -65,11 +65,11 @@ router.post('/getAllRows', async (req, res) => {
         headerColumn.forEach((header) => {
             if (header.childs.length > 0) {
                 header.childs.forEach((child) => {
-                    filterHeaderColumn.push(header.value+child);
+                    filterHeaderColumn.push({id: header.value+child, type: 'check'});
                 });
             } else {
                 for (let i = 0; i < header.colSpan; i++) {
-                    filterHeaderColumn.push(header.value);
+                    filterHeaderColumn.push({id: header.value, type: 'text'});
                 }
             }
         });
@@ -90,8 +90,9 @@ router.post('/getAllRows', async (req, res) => {
 
                 return {
                     value: cell,
-                    id: filterHeaderColumn[cellIdx],
-                    cellId: `${cellColumnIdAlapabet}${rowIdx}`
+                    id: filterHeaderColumn[cellIdx].id,
+                    type: filterHeaderColumn[cellIdx].type,
+                    cellId: `${cellColumnIdAlapabet}${rowIdx+3}`
                 }
             });
             return row;
