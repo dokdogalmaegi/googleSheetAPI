@@ -54,11 +54,6 @@ export class GoogleSheet {
             range
         });
 
-        console.log(await this.#sheetApi.spreadsheets.values.get({
-            spreadsheetId: this.#spreadSheetId,
-            range
-        }));
-
         return values;
     }
 
