@@ -11,8 +11,6 @@ import appendRouter from './router/AppendRouter.mjs';
 const app = express();
 const port = process.env.PORT || 3000;
 
-const INSTANCE_ID = process.env.INSTANCE_ID|| 0;
-
 app.use(express.json());
 app.use(express.urlencoded( {extended: false} ));
 app.use(cors({
@@ -33,5 +31,5 @@ app.use('/append', appendRouter);
 
 
 const server = app.listen(port, () => {
-    console.log(`server on ${INSTANCE_ID}:${port}`);
+    console.log(`server on ${port}`);
 });

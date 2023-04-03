@@ -1,7 +1,9 @@
+import { FailResponseData } from '../util/ResponseUtil.mjs';
+
 import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 
 export function validationWhiteList(req, res, next) {
-    const ipAddress = (req.headers['x-forwarded-for'] ||  req.socket.remoteAddress).replaceAll(':', '').replaceAll('f', '');
+    const ipAddress = (req.headers['x-real-ip'] || req.headers['x-forwarded-for'] ||  req.socket.remoteAddress).replaceAll(':', '').replaceAll('f', '');
     try {
         const isExists = ipWhiteList.whiteList.filter(whiteAddress => whiteAddress === ipAddress);
 
