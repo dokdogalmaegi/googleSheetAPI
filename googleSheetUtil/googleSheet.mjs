@@ -82,6 +82,17 @@ export class GoogleSheet {
         await this.#insertValueToCell(range, resource);
     }
 
+    async insertValuesToRow(start, end, value) {
+        const range = `${start}:${end}`;
+        const resource = {
+            values: [
+                value
+            ]
+        };
+
+        await this.#insertValueToCell(range, resource);
+    }
+
     async #insertValueToCell(range, resource) {
         await this.#sheetApi.spreadsheets.values.update({
             spreadsheetId: this.#spreadSheetId,
