@@ -6,6 +6,7 @@ module.exports = {
         watch: false,
         instance: 4,
         exec_mode: 'cluster',
+        instance_var: 'INSTANCE_ID',
         env: {
             "PORT": 3000,
             "NODE_ENV": "development"
