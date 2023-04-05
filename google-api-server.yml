@@ -20,16 +20,6 @@ spec:
         image: 'localhost:5000/google-api-server:latest'
         ports:
         - containerPort: 3000
-    readinessProbe:
-      httpPost:
-        path: /alive
-        port: 3000
-    livenessProbe:
-      httpPost:
-        path: /alive
-        port: 3000
-      initialDelaySeconds: 5
-      periodSeconds: 5
 ---
 kind: Service
 apiVersion: v1
