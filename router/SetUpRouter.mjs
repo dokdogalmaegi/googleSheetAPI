@@ -33,16 +33,41 @@ router.post('/notification', (req, res) => {
     }
 });
 
+router.post('/emptyNotification', (req, res) => {
+    try {
+        const { password } = req.body.data;
+
+        if (password !== notification.password) {
+            throw Error('Password is not correct');
+        }
+
+        notification.list = [];
+        fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+
+        const returnSuccessData = new SuccessResponseData(`Success empty notification`, notification.list);
+        return res.json(returnSuccessData.json);
+    } catch(error) {
+        console.log(error);
+
+        const returnFailData = new FailResponseData(`Fail empty notification`, error);
+        return res.json(returnFailData.json);
+    }
+});
+
 router.post('/addNotification', (req, res) => {
     try {
-        const { value, date, password } = req.body.data;
+        const { value, date, isDanger, password } = req.body.data;
 
         if (password !== notification.password) {
             throw Error('Password is not correct');
         }
 
         notification.list.push({
-            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss')
+            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger
         });
         fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
             if (err) {
