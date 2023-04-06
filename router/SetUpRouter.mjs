@@ -1,10 +1,12 @@
 import express from "express";
 import fs from 'fs';
 import path from 'path';
+import moment from "moment";
 const __dirname = path.resolve();
 
 import sheetInfo from '../config/sheetInfo.json' assert { type: 'json' };
 import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
+import notification from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from "../util/ExcelUtil.mjs";
@@ -15,12 +17,53 @@ const router = express.Router();
 router.post('/alive', (req, res) => {
     const returnSuccessData = new SuccessResponseData(`Success`, `Alive`);
     return res.json(returnSuccessData.json);
-})
+});
+
+router.post('/notification', (req, res) => {
+    try {
+        const validList = notification.list.filter(noti => moment(noti.date).isBefore(moment().format('YYYY-MM-DD HH:mm:ss')));
+
+        const returnSuccessData = new SuccessResponseData(`Success get notification`, notification.list);
+        return res.json(returnSuccessData.json);
+    } catch(error) {
+        console.log(error);
+
+        const returnFailData = new FailResponseData(`Internal server error`, error);
+        return res.json(returnFailData.json);
+    }
+});
+
+router.post('/addNotification', (req, res) => {
+    try {
+        const { value, date, password } = req.body.data;
+
+        if (password !== notification.password) {
+            throw Error('Password is not correct');
+        }
+
+        notification.list.push({
+            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss')
+        });
+        fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+
+        const returnSuccessData = new SuccessResponseData(`Success set up new notification`, value);
+        return res.json(returnSuccessData.json);
+    } catch(error) {
+        console.log(error);
+
+        const returnFailData = new FailResponseData(`Fail set up new notification`, error);
+        return res.json(returnFailData.json);
+    }
+});
 
 router.post('/addWhiteList', (req, res) => {
-    const { value } = req.body.data;
-
     try {
+        const { value } = req.body.data;
+
         const isExistsIp = ipWhiteList.whiteList.filter(whiteIp => whiteIp === value);
         if (isExistsIp.length > 0) {
             throw Error('Exists ip in white list');
@@ -44,10 +87,10 @@ router.post('/addWhiteList', (req, res) => {
 });
 
 router.post('/spreadSheet', (req, res) => {
-    const { value } = req.body.data;
-    sheetInfo.spreadSheetId = value;
-
     try {
+        const { value } = req.body.data;
+        sheetInfo.spreadSheetId = value;
+
         fs.writeFile(`${__dirname}/config/sheetInfo.json`, JSON.stringify(sheetInfo), (err) => {
             if (err) {
                 throw err;
@@ -65,14 +108,14 @@ router.post('/spreadSheet', (req, res) => {
 });
 
 router.post('/header', async (req, res) => {
-    const { start: startOfHeaderCell, end: endOfHeaderCell } = req.body.data;
-
-    if (!isCell(startOfHeaderCell) || !isCell(endOfHeaderCell)) {
-        const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
-        return res.json(notCellLocationValue.json);
-    }
-
     try {
+        const { start: startOfHeaderCell, end: endOfHeaderCell } = req.body.data;
+
+        if (!isCell(startOfHeaderCell) || !isCell(endOfHeaderCell)) {
+            const notCellLocationValue = new FailResponseData('Must be start or end variable is cell location\nEx) A34', new Error('Must be start or end variable is cell location'));
+            return res.json(notCellLocationValue.json);
+        }
+
         const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
         const returnSuccessData = new SuccessResponseData(`Success select header column list`, await googleSheet.getHeaderColumnFromTwoRows(startOfHeaderCell, endOfHeaderCell));
 

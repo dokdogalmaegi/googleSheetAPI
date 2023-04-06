@@ -9,14 +9,14 @@ import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs'
 const router = express.Router();
 
 router.post('/one', async (req, res) => {
-    const { cell, value } = req.body.data;
-
-    if (!isCell(`${cell}1`)) {
-        const notCellLocationValue = new FailResponseData('Must be cell variable is cell alphabet\nEx) A', new Error('Must be cell variable is cell alphabet'));
-        return res.json(notCellLocationValue.json);
-    }
-
     try {
+        const { cell, value } = req.body.data;
+
+        if (!isCell(`${cell}1`)) {
+            const notCellLocationValue = new FailResponseData('Must be cell variable is cell alphabet\nEx) A', new Error('Must be cell variable is cell alphabet'));
+            return res.json(notCellLocationValue.json);
+        }
+    
         const googleSheet = new GoogleSheet(sheetInfo.spreadSheetId);
         await googleSheet.appendValueToCell(cell, value);
 
@@ -31,15 +31,14 @@ router.post('/one', async (req, res) => {
 });
 
 router.post('/many', async (req, res) => {
-    const { start: startAlphabet, end: endAlphabet, values } = req.body.data;
-    const { plusNumber } = req.query;
-
-    if (!isCell(`${startAlphabet}1`) || !isCell(`${endAlphabet}1`)) {
-        const notCellLocationValue = new FailResponseData('Must be start or end variable is cell alphabet\nEx) A', new Error('Must be start or end variable is cell alphabet'));
-        return res.json(notCellLocationValue.json);
-    }
-
     try {
+        const { start: startAlphabet, end: endAlphabet, values } = req.body.data;
+        if (!isCell(`${startAlphabet}1`) || !isCell(`${endAlphabet}1`)) {
+            const notCellLocationValue = new FailResponseData('Must be start or end variable is cell alphabet\nEx) A', new Error('Must be start or end variable is cell alphabet'));
+            return res.json(notCellLocationValue.json);
+        }
+        
+        const { plusNumber } = req.query;
         const options = {
             plusNumber: Number(plusNumber)
         };
