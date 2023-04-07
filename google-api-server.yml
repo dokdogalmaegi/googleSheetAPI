@@ -46,4 +46,10 @@ spec:
                 name: api-server-service
                 port:
                   number: 3000
+            path: /test
+            backend:
+              service:
+                name: postgres
+                port:
+                  number: 5432                  
 ---
