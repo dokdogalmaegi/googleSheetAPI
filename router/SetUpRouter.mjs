@@ -60,14 +60,14 @@ router.post('/emptyNotification', (req, res) => {
 
 router.post('/addNotification', (req, res) => {
     try {
-        const { value, date, isDanger, password } = req.body.data;
+        const { value, date, isDanger, blockAction, password } = req.body.data;
 
         if (password !== notification.password) {
             throw Error('Password is not correct');
         }
 
         notification.list.push({
-            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger
+            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger, blockAction
         });
         fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
             if (err) {
