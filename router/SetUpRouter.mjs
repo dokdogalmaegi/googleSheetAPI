@@ -12,12 +12,22 @@ import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
+const ACTION_TYPE = {
+    RELOAD: 'RELOAD',
+    BATCH_INSERT: 'BATCH_INSERT',
+    NEW_ROW: 'NEW_ROW',
+    DELETE_NEW_ROW: 'DELETE_NEW_ROW',
+    DELETE_ROW: 'DELETE_ROW',
+    CHANGE_EDITOR: 'CHANGE_EDITOR',
+};
+
 const router = express.Router();
 
 router.post('/alive', (req, res) => {
     const returnSuccessData = new SuccessResponseData(`Success`, `Alive`);
     return res.json(returnSuccessData.json);
 });
+
 
 router.post('/notification', (req, res) => {
     try {
@@ -66,6 +76,9 @@ router.post('/addNotification', (req, res) => {
             throw Error('Password is not correct');
         }
 
+        if (!ACTION_TYPE[blockAction]) {
+            throw Error('Block action is not correct');
+        }
         notification.list.push({
             value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger, blockAction
         });
