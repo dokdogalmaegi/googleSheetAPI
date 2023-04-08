@@ -9,7 +9,7 @@ import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 // import notification from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
-import { getNotExpiredNotification, getBlockActionFromNotiKey, appendErrorLog } from "../util/PostgresUtil.mjs";
+import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendErrorLog } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -28,18 +28,6 @@ router.post('/alive', (req, res) => {
     const returnSuccessData = new SuccessResponseData(`Success`, `Alive`);
     return res.json(returnSuccessData.json);
 });
-
-/**
-    "value": "test 공지입니다.5",
-    "date": "2023-04-10 10:00:00",
-    "isDanger": true,
-    "blockAction": [
-        {
-            "element": "all",
-            "fixVersion": "1.0.5"
-        }
-    ],
-*/
 
 router.post('/notification', async (req, res) => {
     try {
@@ -75,14 +63,9 @@ router.post('/emptyNotification', async (req, res) => {
             throw Error('Password is not correct');
         }
 
-        notification.list = [];
-        fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
-            if (err) {
-                throw err;
-            }
-        });
+        await deleteAllNotification();
 
-        const returnSuccessData = new SuccessResponseData(`Success empty notification`, notification.list);
+        const returnSuccessData = new SuccessResponseData(`Success empty notification`, []);
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);

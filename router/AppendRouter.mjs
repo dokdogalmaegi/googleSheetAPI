@@ -6,6 +6,8 @@ import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from '../util/ExcelUtil.mjs';
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
+import { appendErrorLog } from "../util/PostgresUtil.mjs"; 
+
 const router = express.Router();
 
 router.post('/one', async (req, res) => {
@@ -23,9 +25,10 @@ router.post('/one', async (req, res) => {
         const returnSuccessValue = new SuccessResponseData(`Success append ${value}`, 'Success');
         return res.json(returnSuccessValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail append`, error);
-
         console.log(error);
+        await appendErrorLog('append/one', error.message, false);
+
+        const retrunFailValue = new FailResponseData(`Fail append`, error);
         return res.json(retrunFailValue.json);
     }
 });
@@ -49,9 +52,10 @@ router.post('/many', async (req, res) => {
         const returnSuccessValue = new SuccessResponseData(`Success append ${startAlphabet} ~ ${endAlphabet}`, 'Success');
         return res.json(returnSuccessValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail append`, error);
-
         console.log(error);
+        await appendErrorLog('append/many', error.message, true);
+        
+        const retrunFailValue = new FailResponseData(`Fail append`, error);
         return res.json(retrunFailValue.json);
     }
 })

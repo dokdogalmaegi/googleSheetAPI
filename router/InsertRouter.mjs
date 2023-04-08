@@ -6,6 +6,8 @@ import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from '../util/ExcelUtil.mjs';
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
+import { appendErrorLog } from "../util/PostgresUtil.mjs"; 
+
 const router = express.Router();
 
 router.post('/one', async (req, res) => {
@@ -23,9 +25,10 @@ router.post('/one', async (req, res) => {
         const returnSuccessValue = new SuccessResponseData(`Success insert ${value} to ${location}`, 'Success');
         return res.json(returnSuccessValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail insert ${location}`, error);
-
         console.log(error);
+        await appendErrorLog('insert/one', error.message, false);
+
+        const retrunFailValue = new FailResponseData(`Fail insert ${location}`, error);
         return res.json(retrunFailValue.json);
     }
 });
@@ -45,9 +48,10 @@ router.post('/many', async (req, res) => {
         const returnSuccessValue = new SuccessResponseData(`Success insert ${values} to ${startAlapabet}:${endAlapabet}`, 'Success');
         return res.json(returnSuccessValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail insert ${startAlapabet}:${endAlapabet}`, error);
-
         console.log(error);
+        await appendErrorLog('insert/many', error.message, true);
+
+        const retrunFailValue = new FailResponseData(`Fail insert ${startAlapabet}:${endAlapabet}`, error);
         return res.json(retrunFailValue.json);
     }
 });

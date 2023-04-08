@@ -6,6 +6,8 @@ import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
 import { isCell } from '../util/ExcelUtil.mjs';
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
+import { appendErrorLog } from "../util/PostgresUtil.mjs"; 
+
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -21,9 +23,10 @@ router.post('/', async (req, res) => {
 
         return res.json(returnCellValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail select ${start}:${end}`, error);
-
         console.log(error);
+        await appendErrorLog('/select', error.message, false);
+
+        const retrunFailValue = new FailResponseData(`Fail select ${start}:${end}`, error);
         return res.json(retrunFailValue.json);
     }
 });
@@ -43,9 +46,10 @@ router.post('/getBy/:sheetId', async (req, res) => {
 
         return res.json(returnCellValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
-
         console.log(error);
+        await appendErrorLog('/select/getBy/:sheetId', error.message, false);
+
+        const retrunFailValue = new FailResponseData(`Fail select ${sheetId}!${start}:${end}`, error);
         return res.json(retrunFailValue.json);
     } 
 });
@@ -102,9 +106,10 @@ router.post('/getAllRows', async (req, res) => {
         const returnCellValue = new SuccessResponseData(`Success select allRows}`, rows);
         return res.json(returnCellValue.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail select allRows`, error);
-
         console.log(error);
+        await appendErrorLog('select/getAllRows', error.message, true);
+        
+        const retrunFailValue = new FailResponseData(`Fail select allRows`, error);
         return res.json(retrunFailValue.json);
     } 
 })
