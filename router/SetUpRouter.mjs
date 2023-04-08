@@ -9,7 +9,7 @@ import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 // import notification from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
-import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendErrorLog } from "../util/PostgresUtil.mjs";
+import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendNotification, appendBlockAction ,appendErrorLog, appendBlockActionList } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -59,7 +59,7 @@ router.post('/emptyNotification', async (req, res) => {
     try {
         const { password } = req.body.data;
 
-        if (password !== notification.password) {
+        if (password !== 'cube0216') {
             throw Error('Password is not correct');
         }
 
@@ -78,28 +78,23 @@ router.post('/emptyNotification', async (req, res) => {
 
 router.post('/addNotification', async (req, res) => {
     try {
-        const { value, date, isDanger, blockAction, password } = req.body.data;
+        const { id, value, expired, isDanger, blockAction, password } = req.body.data;
 
-        if (password !== notification.password) {
+        if (password !== 'cube0216') {
             throw Error('Password is not correct');
         }
 
         if (Array.isArray(blockAction)) {
-            blockAction.forEach(({element, _}) => {
-                if (!ACTION_TYPE[element] && element !== 'ALL') {
+            blockAction.forEach(({action, _}) => {
+                if (!ACTION_TYPE[action] && action !== 'ALL') {
                     throw Error('Block action is not correct');
                 }    
             })
         }
 
-        notification.list.push({
-            value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger, blockAction
-        });
-        fs.writeFile(`${__dirname}/config/notification.json`, JSON.stringify(notification), (err) => {
-            if (err) {
-                throw err;
-            }
-        });
+        await appendNotification(id, value, expired, isDanger);
+
+        await appendBlockActionList(id, blockAction);
 
         const returnSuccessData = new SuccessResponseData(`Success set up new notification`, value);
         return res.json(returnSuccessData.json);
