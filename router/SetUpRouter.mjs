@@ -6,10 +6,10 @@ const __dirname = path.resolve();
 
 import sheetInfo from '../config/sheetInfo.json' assert { type: 'json' };
 import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
-// import notification from '../config/notification.json' assert { type: 'json' };
+import notificationConfig from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
-import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendNotification, appendBlockAction ,appendErrorLog, appendBlockActionList } from "../util/PostgresUtil.mjs";
+import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendNotification ,appendErrorLog, appendBlockActionList, getTodayError } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -59,7 +59,7 @@ router.post('/emptyNotification', async (req, res) => {
     try {
         const { password } = req.body.data;
 
-        if (password !== 'cube0216') {
+        if (password !== notificationConfig.password) {
             throw Error('Password is not correct');
         }
 
@@ -80,7 +80,7 @@ router.post('/addNotification', async (req, res) => {
     try {
         const { id, value, expired, isDanger, blockAction, password } = req.body.data;
 
-        if (password !== 'cube0216') {
+        if (password !== notificationConfig.password) {
             throw Error('Password is not correct');
         }
 
@@ -103,6 +103,27 @@ router.post('/addNotification', async (req, res) => {
         await appendErrorLog('/addNotification', error.message, false);
 
         const returnFailData = new FailResponseData(`Fail set up new notification`, error);
+        return res.json(returnFailData.json);
+    }
+});
+
+router.post('/toDayError', async (req, res) => {
+    try {
+        const { password } = req.body.data;
+
+        if (password !== notificationConfig.password) {
+            throw Error('Password is not correct');
+        }
+
+        const errorList = await getTodayError();
+
+        const returnSuccessData = new SuccessResponseData(`Success get toDay error`, errorList);
+        return res.json(returnSuccessData.json);
+    } catch (error) {
+        console.log(error);
+        await appendErrorLog('/addNotification', error.message, false);
+
+        const returnFailData = new FailResponseData(`Fail get to day error`, error);
         return res.json(returnFailData.json);
     }
 });

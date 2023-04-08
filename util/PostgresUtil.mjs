@@ -13,7 +13,7 @@ pool.connect();
 
 const SELECT_QUERY_TAMPLTE = {
     NOTIFICATION: `
-        SELECT NT.NOTI_KEY, NT.NOTI_ID, NT.CONTENT, TO_CHAR(NT.EXPIRED, 'YYYY-MM-DD HH:mm:ss') EXPIRED, IS_DANGER
+        SELECT NT.NOTI_KEY, NT.NOTI_ID, NT.CONTENT, TO_CHAR(NT.EXPIRED, 'YYYY-MM-DD HH24:MI:ss') EXPIRED, IS_DANGER
         FROM NOTIFICATION NT
         WHERE 1=1
     `,
@@ -131,4 +131,17 @@ export const appendBlockActionList = async (notiId, blockActionList) => {
     console.log(queryString);
 
     await pool.query(queryString);
+}
+
+export const getTodayError = async () => {
+    const queryString = `
+        SELECT EL.FUN_NAME, TO_CHAR(EL.FIRE_DATE, 'YYYY-MM-DD HH24:MI:ss') FIRE_DATE, EL.MESSAGE, EL.IS_DANGER
+        FROM ERROR_LOG EL
+        WHERE TO_CHAR(EL.FIRE_DATE, 'YYYY-MM-DD') = TO_CHAR(NOW(), 'YYYY-MM-DD')
+        ORDER BY FIRE_DATE DESC
+    `;
+
+    const result = await pool.query(queryString);
+
+    return result.rows
 }
