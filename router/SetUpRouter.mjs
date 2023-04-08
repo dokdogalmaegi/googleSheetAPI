@@ -6,10 +6,10 @@ const __dirname = path.resolve();
 
 import sheetInfo from '../config/sheetInfo.json' assert { type: 'json' };
 import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
-import notification from '../config/notification.json' assert { type: 'json' };
+// import notification from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
-import { getNotExpiredNotification, getBlockAction } from "../util/PostgresUtil.mjs";
+import { getNotExpiredNotification, getBlockActionFromNotiKey, appendErrorLog } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -29,26 +29,45 @@ router.post('/alive', (req, res) => {
     return res.json(returnSuccessData.json);
 });
 
+/**
+    "value": "test 공지입니다.5",
+    "date": "2023-04-10 10:00:00",
+    "isDanger": true,
+    "blockAction": [
+        {
+            "element": "all",
+            "fixVersion": "1.0.5"
+        }
+    ],
+*/
 
 router.post('/notification', async (req, res) => {
     try {
-        console.log(await getNotExpiredNotification());
+        const selectNotification = await getNotExpiredNotification();
 
-        console.log(await getBlockAction());
+        const notification = await Promise.all(selectNotification.map(async notification => {
+            const { noti_key: notiKey, content, is_danger: isDanger } = notification;
+            const blockAction = await getBlockActionFromNotiKey(notiKey);
+            
+            return {
+                value: content,
+                isDanger: isDanger,
+                blockAction
+            };
+        }));
 
-        const validList = notification.list.filter(noti => moment(noti.date).isBefore(moment().format('YYYY-MM-DD HH:mm:ss')));
-
-        const returnSuccessData = new SuccessResponseData(`Success get notification`, notification.list);
+        const returnSuccessData = new SuccessResponseData(`Success get notification`, notification);
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
+        await appendErrorLog('/notification', error.message, false);
 
         const returnFailData = new FailResponseData(`Internal server error`, error);
         return res.json(returnFailData.json);
     }
 });
 
-router.post('/emptyNotification', (req, res) => {
+router.post('/emptyNotification', async (req, res) => {
     try {
         const { password } = req.body.data;
 
@@ -67,13 +86,14 @@ router.post('/emptyNotification', (req, res) => {
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
+        await appendErrorLog('/emptyNotification', error.message, false);
 
         const returnFailData = new FailResponseData(`Fail empty notification`, error);
         return res.json(returnFailData.json);
     }
 });
 
-router.post('/addNotification', (req, res) => {
+router.post('/addNotification', async (req, res) => {
     try {
         const { value, date, isDanger, blockAction, password } = req.body.data;
 
@@ -83,7 +103,7 @@ router.post('/addNotification', (req, res) => {
 
         if (Array.isArray(blockAction)) {
             blockAction.forEach(({element, _}) => {
-                if (!ACTION_TYPE[element] && element !== 'all') {
+                if (!ACTION_TYPE[element] && element !== 'ALL') {
                     throw Error('Block action is not correct');
                 }    
             })
@@ -102,13 +122,14 @@ router.post('/addNotification', (req, res) => {
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
+        await appendErrorLog('/addNotification', error.message, false);
 
         const returnFailData = new FailResponseData(`Fail set up new notification`, error);
         return res.json(returnFailData.json);
     }
 });
 
-router.post('/addWhiteList', (req, res) => {
+router.post('/addWhiteList', async (req, res) => {
     try {
         const { value } = req.body.data;
 
@@ -128,13 +149,14 @@ router.post('/addWhiteList', (req, res) => {
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
+        await appendErrorLog('/addWhiteList', error.message, false);
 
         const returnFailData = new FailResponseData(`Fail set up new white list`, error);
         return res.json(returnFailData.json);
     }
 });
 
-router.post('/spreadSheet', (req, res) => {
+router.post('/spreadSheet', async (req, res) => {
     try {
         const { value } = req.body.data;
         sheetInfo.spreadSheetId = value;
@@ -149,6 +171,7 @@ router.post('/spreadSheet', (req, res) => {
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
+        await appendErrorLog('/spreadSheet', error.message, true);
 
         const returnFailData = new FailResponseData(`Fail set up spread sheet id`, error);
         return res.json(returnFailData.json);
@@ -169,9 +192,10 @@ router.post('/header', async (req, res) => {
 
         return res.json(returnSuccessData.json);
     } catch(error) {
-        const retrunFailValue = new FailResponseData(`Fail select header column list`, error);
-
         console.log(error);
+        await appendErrorLog('/header', error.message, true);
+
+        const retrunFailValue = new FailResponseData(`Fail select header column list`, error);
         return res.json(retrunFailValue.json);
     }
 })
