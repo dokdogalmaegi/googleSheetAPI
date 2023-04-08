@@ -9,6 +9,7 @@ import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 import notification from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
+import { getNotExpiredNotification, getBlockAction } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -29,8 +30,12 @@ router.post('/alive', (req, res) => {
 });
 
 
-router.post('/notification', (req, res) => {
+router.post('/notification', async (req, res) => {
     try {
+        console.log(await getNotExpiredNotification());
+
+        console.log(await getBlockAction());
+
         const validList = notification.list.filter(noti => moment(noti.date).isBefore(moment().format('YYYY-MM-DD HH:mm:ss')));
 
         const returnSuccessData = new SuccessResponseData(`Success get notification`, notification.list);
@@ -76,9 +81,14 @@ router.post('/addNotification', (req, res) => {
             throw Error('Password is not correct');
         }
 
-        if (!ACTION_TYPE[blockAction]) {
-            throw Error('Block action is not correct');
+        if (Array.isArray(blockAction)) {
+            blockAction.forEach(({element, _}) => {
+                if (!ACTION_TYPE[element] && element !== 'all') {
+                    throw Error('Block action is not correct');
+                }    
+            })
         }
+
         notification.list.push({
             value, date: moment(date).format('YYYY-MM-DD HH:mm:ss'), isDanger, blockAction
         });

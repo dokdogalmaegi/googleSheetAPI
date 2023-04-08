@@ -46,10 +46,11 @@ spec:
                 name: api-server-service
                 port:
                   number: 3000
-            path: /test
+          - pathType: Prefix
+            path: /postgres
             backend:
               service:
                 name: postgres
                 port:
-                  number: 5432                  
+                  number: 5432
 ---

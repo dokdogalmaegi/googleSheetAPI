@@ -29,8 +29,8 @@ metadata:
   name: postgres
 type: Opaque
 data:
-  POSTGRES_USER: cG9zdGdyZXM=     # printf postgres | base64
-  POSTGRES_PASSWORD: cGFzc3dvcmQ= # printf password | base64
+  POSTGRES_USER: anlsaW0=     # printf postgres | base64
+  POSTGRES_PASSWORD: anlsaW0wNjE0 # printf password | base64
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -94,3 +94,4 @@ spec:
       port: 5432
       targetPort: 5432
       protocol: TCP
+---
