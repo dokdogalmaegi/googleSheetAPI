@@ -20,6 +20,14 @@ spec:
         image: 'localhost:5000/google-api-server:latest'
         ports:
         - containerPort: 3000
+        livenessProbe:
+          exec:
+            command:
+              - curl
+              - -X POST
+              - http://localhost/setUp/alive
+          initialDelaySeconds: 10
+          periodSeconds: 600
 ---
 kind: Service
 apiVersion: v1
@@ -47,10 +55,10 @@ spec:
                 port:
                   number: 3000
           - pathType: Prefix
-            path: /postgres
+            path: /admin
             backend:
               service:
-                name: postgres
+                name: notification-admin-service
                 port:
-                  number: 5432
+                  number: 3500
 ---
