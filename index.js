@@ -32,6 +32,9 @@ app.use('/insert', insertRouter);
 app.use('/append', appendRouter);
 
 
+import fs from 'fs';
+import path from 'path';
+const __dirname = path.resolve();
 
 const server = app.listen(port, async () => {
     try {
