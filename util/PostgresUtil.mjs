@@ -24,6 +24,35 @@ const SELECT_QUERY_TAMPLTE = {
     `,
 };
 
+export const getSpreadSheet = async () => {
+    const queryString = `
+        SELECT VALUE
+        FROM CONFIG
+        WHERE CONF_ID = 'SHEET_ID'
+    `;
+
+    const result = await pool.query(queryString);
+
+    return result?.rows[0]?.value;
+};
+
+export const setSpreadSheet = async (spreadSheetId) => {
+    const currentSheetId = await getSpreadSheet();
+
+    if (currentSheetId === spreadSheetId) {
+        throw Error('Same sheet id');
+    }
+
+    const queryString = `
+        UPDATE CONFIG 
+        SET 
+            VALUE = '${spreadSheetId}' 
+        WHERE CONF_ID = 'SHEET_ID';
+    `;
+
+    await pool.query(queryString);
+}
+
 export const getNotification = async () => {
     const result = await pool.query(SELECT_QUERY_TAMPLTE.NOTIFICATION);
 

@@ -9,7 +9,7 @@ import ipWhiteList from '../config/ipWhiteList.json' assert { type: 'json' };
 import notificationConfig from '../config/notification.json' assert { type: 'json' };
 
 import { GoogleSheet } from '../googleSheetUtil/GoogleSheet.mjs';
-import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendNotification ,appendErrorLog, appendBlockActionList, getTodayError } from "../util/PostgresUtil.mjs";
+import { getNotExpiredNotification, getBlockActionFromNotiKey, deleteAllNotification, appendNotification ,appendErrorLog, appendBlockActionList, getTodayError, setSpreadSheet } from "../util/PostgresUtil.mjs";
 import { isCell } from "../util/ExcelUtil.mjs";
 import { SuccessResponseData, FailResponseData } from '../util/ResponseUtil.mjs';
 
@@ -158,19 +158,13 @@ router.post('/addWhiteList', async (req, res) => {
 router.post('/spreadSheet', async (req, res) => {
     try {
         const { value } = req.body.data;
-        sheetInfo.spreadSheetId = value;
-
-        fs.writeFile(`${__dirname}/config/sheetInfo.json`, JSON.stringify(sheetInfo), (err) => {
-            if (err) {
-                throw err;
-            }
-        });
+        await setSpreadSheet(value);
         
         const returnSuccessData = new SuccessResponseData(`Success set up spread sheet id`, value);
         return res.json(returnSuccessData.json);
     } catch(error) {
         console.log(error);
-        await appendErrorLog('/spreadSheet', error.message, true);
+        await appendErrorLog('/spreadSheet', error.message, false);
 
         const returnFailData = new FailResponseData(`Fail set up spread sheet id`, error);
         return res.json(returnFailData.json);
