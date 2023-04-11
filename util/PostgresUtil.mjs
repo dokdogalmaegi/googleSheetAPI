@@ -9,7 +9,7 @@ const pool = new Pool({
     port: 5432
 });
 
-// pool.connect();
+pool.connect();
 
 const SELECT_QUERY_TAMPLTE = {
     NOTIFICATION: `

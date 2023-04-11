@@ -52,21 +52,21 @@ const __dirname = path.resolve();
  *  description: error log
  */
 const server = app.listen(port, async () => {
-    // try {
-    //     const currentSheetId = await getSpreadSheet();
+    try {
+        const currentSheetId = await getSpreadSheet();
 
-    //     if (sheetInfo.spreadSheetId !== currentSheetId) {
-    //         sheetInfo.spreadSheetId = currentSheetId;
+        if (sheetInfo.spreadSheetId !== currentSheetId) {
+            sheetInfo.spreadSheetId = currentSheetId;
 
-    //         fs.writeFile(`${__dirname}/config/sheetInfo.json`, JSON.stringify(sheetInfo), (err) => {
-    //             if (err) {
-    //                 throw err;
-    //             };
-    //         });
-    //     }
-    // } catch (error) {
-    //     await appendErrorLog('start server', error.message, true);
-    // }
+            fs.writeFile(`${__dirname}/config/sheetInfo.json`, JSON.stringify(sheetInfo), (err) => {
+                if (err) {
+                    throw err;
+                };
+            });
+        }
+    } catch (error) {
+        await appendErrorLog('start server', error.message, true);
+    }
 
     console.log(`server on ${port}`);
 });
