@@ -10,6 +10,70 @@ import { appendErrorLog } from "../util/PostgresUtil.mjs";
 
 const router = express.Router();
 
+
+/**
+ * @swagger
+ * tags:
+ *  name: Select Row
+ *  description: Select Row
+ */
+
+/**
+ * @swagger
+ * /select:
+ *  post:
+ *      summary: Select row
+ *      tags: [Select Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  start:
+ *                                      type: string
+ *                                      example: A1
+ *                                  end:
+ *                                      type: string
+ *                                      example: A2
+ *      responses:
+ *          200:
+ *              description: Success select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Fail Message
+ */
 router.post('/', async (req, res) => {
     try {
         const { start, end } = req.body.data;
@@ -31,6 +95,69 @@ router.post('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /select/getBy/{sheetId}:
+ *  post:
+ *      summary: Select row
+ *      tags: [Select Row]
+ *      parameters:
+ *          - in: path
+ *            name: sheetId
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: sheet ID
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  start:
+ *                                      type: string
+ *                                      example: A1
+ *                                  end:
+ *                                      type: string
+ *                                      example: A2
+ *      responses:
+ *          200:
+ *              description: Success select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Fail Message
+ */
 router.post('/getBy/:sheetId', async (req, res) => {
     try {
         const { params: { sheetId }, body: { start, end } } = req;
@@ -54,6 +181,65 @@ router.post('/getBy/:sheetId', async (req, res) => {
     } 
 });
 
+/**
+ * @swagger
+ * /select/getAllRows:
+ *  post:
+ *      summary: Select row
+ *      tags: [Select Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  headerRows:
+ *                                      type: object
+ *                                      properties:
+ *                                          startCell:
+ *                                              type: string
+ *                                              example: A1
+ *                                          endAlphabet:
+ *                                              type: string
+ *                                              example: AD
+ *      responses:
+ *          200:
+ *              description: Success select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail select
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Fail Message
+ */
 router.post('/getAllRows', async (req, res) => {
     try {        
         const { headerRows: { startCell, endAlphabet } } = req.body.data;
