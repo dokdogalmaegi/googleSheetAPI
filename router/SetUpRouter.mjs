@@ -27,7 +27,7 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *  name: SetUp
+ *  name: Set Up
  *  description: sever setting & server config setting
  */
 
@@ -35,7 +35,7 @@ const router = express.Router();
  * @swagger
  * /setUp/alive:
  *  post:
- *      tags: [SetUp]
+ *      tags: [Set Up]
  *      summary: check server is alive
  *      description: check server is alive
  *      responses:
@@ -51,7 +51,7 @@ router.post('/alive', (req, res) => {
  * @swagger
  * /setUp/notification:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: get notification
  *    description: get notification
  *    responses:
@@ -123,7 +123,7 @@ router.post('/notification', async (req, res) => {
  * @swagger
  * /setUp/emptyNotification:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: empty notification
  *    description: empty notification
  *    requestBody:
@@ -178,7 +178,7 @@ router.post('/emptyNotification', async (req, res) => {
  * @swagger
  * /setUp/addNotification:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: add notification
  *    description: add notification
  *    requestBody:
@@ -266,7 +266,7 @@ router.post('/addNotification', async (req, res) => {
  * @swagger
  * /setUp/toDayError:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: get to day error
  *    description: get to day error
  *    requestBody:
@@ -338,7 +338,7 @@ router.post('/toDayError', async (req, res) => {
  * @swagger
  * /setUp/addWhiteList:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: add white list
  *    description: add white list
  *    requestBody:
@@ -402,7 +402,7 @@ router.post('/addWhiteList', async (req, res) => {
  * @swagger
  * /setUp/spreadSheet:
  *  post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: set spread sheet id
  *    description: set spread sheet id
  *    requestBody:
@@ -455,7 +455,7 @@ router.post('/spreadSheet', async (req, res) => {
  * @swagger
  * /setUp/header:
  *   post:
- *    tags: [SetUp]
+ *    tags: [Set Up]
  *    summary: get header column list
  *    description: get header column list
  *    requestBody:

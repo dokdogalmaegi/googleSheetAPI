@@ -10,6 +10,65 @@ import { appendErrorLog } from "../util/PostgresUtil.mjs";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *  name: Append Row
+ *  description: Append Row
+ */
+
+/**
+ * @swagger
+ * /append/one:
+ *  post:
+ *      summary: Append one row
+ *      tags: [Append Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  cell:
+ *                                      type: string
+ *                                      example: A
+ *                                  value:
+ *                                      type: string
+ *                                      example: test
+ *      responses:
+ *          200:
+ *              description: Success append
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail append
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              data:
+ *                                  type: string
+ *                                  example: Fail append
+ *                              error:
+ *                                  type: object
+ */
 router.post('/one', async (req, res) => {
     try {
         const { cell, value } = req.body.data;
@@ -33,6 +92,70 @@ router.post('/one', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /append/many:
+ *  post:
+ *      summary: Append many row
+ *      tags: [Append Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  start:
+ *                                      type: string
+ *                                      example: A
+ *                                  end:
+ *                                      type: string
+ *                                      example: B
+ *                                  values:
+ *                                      type: array
+ *                                      items:
+ *                                          type: string
+ *                                      example: ["test1", "test2"]
+ *      parameters:
+ *          - in: query
+ *            name: plusNumber
+ *            schema:
+ *              type: integer
+ *              default: 1
+ *            description: Append row number
+ *      responses:
+ *          200:
+ *              description: Success append
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail append
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              data:
+ *                                  type: string
+ *                                  example: Fail append
+ *                              error:
+ *                                  type: object
+ */
 router.post('/many', async (req, res) => {
     try {
         const { start: startAlphabet, end: endAlphabet, values } = req.body.data;
