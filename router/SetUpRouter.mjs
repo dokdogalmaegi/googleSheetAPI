@@ -47,6 +47,52 @@ router.post('/alive', (req, res) => {
     return res.json(returnSuccessData.json);
 });
 
+/**
+ * @swagger
+ * /setUp/notification:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: get notification
+ *    description: get notification
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: notification content
+ *                       isDanger:
+ *                         type: boolean
+ *                         description: is danger notification
+ *                       blockAction:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             fixVersion:
+ *                               type: string
+ *                               description: fix version
+ *                             action:
+ *                               type: string
+ *                               description: action type
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/notification', async (req, res) => {
     try {
         const selectNotification = await getNotExpiredNotification();
@@ -73,6 +119,40 @@ router.post('/notification', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/emptyNotification:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: empty notification
+ *    description: empty notification
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              password:
+ *                type: string
+ *                description: password
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/emptyNotification', async (req, res) => {
     try {
         const { password } = req.body.data;
@@ -94,6 +174,63 @@ router.post('/emptyNotification', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/addNotification:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: add notification
+ *    description: add notification
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              id:
+ *                type: string
+ *                description: notification id
+ *              value:
+ *                type: string
+ *                description: notification content
+ *              expired:
+ *                type: string
+ *                description: expired date
+ *              isDanger:
+ *                type: boolean
+ *                description: is danger notification
+ *              blockAction:
+ *                type: array
+ *                items:
+ *                  type: object
+ *                  properties:
+ *                    fixVersion:
+ *                      type: string
+ *                      description: fix version
+ *                    action:
+ *                      type: string
+ *                      description: action type
+ *              password:
+ *                type: string
+ *                description: password
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/addNotification', async (req, res) => {
     try {
         const { id, value, expired, isDanger, blockAction, password } = req.body.data;
@@ -125,6 +262,57 @@ router.post('/addNotification', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/toDayError:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: get to day error
+ *    description: get to day error
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              password:
+ *                type: string
+ *                description: password
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       fun_name:
+ *                         type: string
+ *                         description: error function name
+ *                       fire_date:
+ *                         type: string
+ *                         description: error fire date
+ *                       message:
+ *                         type: string
+ *                         description: error message
+ *                       is_danger:
+ *                         type: boolean
+ *                         description: is danger error
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/toDayError', async (req, res) => {
     try {
         const { password } = req.body.data;
@@ -146,6 +334,43 @@ router.post('/toDayError', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/addWhiteList:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: add white list
+ *    description: add white list
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              value:
+ *                type: string
+ *                description: white list ip
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *                 data:
+ *                   type: string
+ *                   description: white list ip
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/addWhiteList', async (req, res) => {
     try {
         const { value } = req.body.data;
@@ -173,6 +398,43 @@ router.post('/addWhiteList', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/spreadSheet:
+ *  post:
+ *    tags: [SetUp]
+ *    summary: set spread sheet id
+ *    description: set spread sheet id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              value:
+ *                type: string
+ *                description: spread sheet id
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *                 data:
+ *                   type: string
+ *                   description: spread sheet id
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/spreadSheet', async (req, res) => {
     try {
         const { value } = req.body.data;
@@ -189,6 +451,67 @@ router.post('/spreadSheet', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /setUp/header:
+ *   post:
+ *    tags: [SetUp]
+ *    summary: get header column list
+ *    description: get header column list
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              start:
+ *                type: string
+ *                description: start cell location
+ *              end:
+ *                type: string
+ *                description: end cell location
+ *    responses:
+ *      200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: response status
+ *                   example: success
+ *                 resultMsg:
+ *                   type: string
+ *                   description: response message
+ *                   example: Success select header column list
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: header value
+ *                         example: App.
+ *                       rowSpan:
+ *                         type: string
+ *                         description: row span value
+ *                         example: 2
+ *                       colSpan:
+ *                         type: string
+ *                         description: column span value
+ *                         example: 1
+ *                       childs:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                           description: child header value
+ *      500:
+ *        description: Internal server error
+ */
 router.post('/header', async (req, res) => {
     try {
         const { start: startOfHeaderCell, end: endOfHeaderCell } = req.body.data;
