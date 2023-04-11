@@ -61,4 +61,11 @@ spec:
                 name: notification-admin-service
                 port:
                   number: 3500
+          - pathType: Prefix
+            path: /deploy
+            backend:
+              service:
+                name: deploy-application-service
+                port:
+                  number: 3300
 ---
