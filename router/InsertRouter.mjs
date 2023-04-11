@@ -10,6 +10,69 @@ import { appendErrorLog } from "../util/PostgresUtil.mjs";
 
 const router = express.Router();
 
+
+/**
+ * @swagger
+ * tags:
+ *  name: Insert Row
+ *  description: Insert(Update) Row
+ */
+
+/**
+ * @swagger
+ * /insert/one:
+ *  post:
+ *      summary: Insert one row
+ *      tags: [Insert Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  cell:
+ *                                      type: string
+ *                                      example: A
+ *                                  value:
+ *                                      type: string
+ *                                      example: test
+ *      responses:
+ *          200:
+ *              description: Success insert
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail insert
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              error:
+ *                                  type: object
+ */
 router.post('/one', async (req, res) => {
     try {
         const { location, value } = req.body.data;
@@ -33,6 +96,65 @@ router.post('/one', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /insert/many:
+ *  post:
+ *      summary: Insert many row
+ *      tags: [Insert Row]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          data:
+ *                              type: object
+ *                              properties:
+ *                                  start:
+ *                                      type: string
+ *                                      example: A
+ *                                  end:
+ *                                      type: string
+ *                                      example: B
+ *                                  values:
+ *                                      type: array
+ *                                      items:
+ *                                          type: string
+ *      responses:
+ *          200:
+ *              description: Success insert
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              data:
+ *                                  type: string
+ *                                  description: Success Message
+ *          500:
+ *              description: Fail insert
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              status:
+ *                                  type: string
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
+ *                              error:
+ *                                  type: object
+ */
 router.post('/many', async (req, res) => {
     try {
         const { start: startAlapabet, end: endAlapabet, values } = req.body.data;

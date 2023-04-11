@@ -63,9 +63,12 @@ const router = express.Router();
  *                      schema:
  *                          type: object
  *                          properties:
- *                              data:
+ *                              status:
  *                                  type: string
- *                                  example: Fail append
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
  *                              error:
  *                                  type: object
  */
@@ -150,9 +153,12 @@ router.post('/one', async (req, res) => {
  *                      schema:
  *                          type: object
  *                          properties:
- *                              data:
+ *                              status:
  *                                  type: string
- *                                  example: Fail append
+ *                                  description: response status
+ *                              resultMsg:
+ *                                  type: string
+ *                                  description: response message
  *                              error:
  *                                  type: object
  */
