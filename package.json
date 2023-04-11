@@ -16,6 +16,8 @@
     "googleapis": "113.0.0",
     "moment": "^2.29.4",
     "nodemon": "2.0.22",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
   }
 }

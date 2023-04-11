@@ -24,6 +24,24 @@ const ACTION_TYPE = {
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *  name: SetUp
+ *  description: sever setting & server config setting
+ */
+
+/**
+ * @swagger
+ * /setUp/alive:
+ *  post:
+ *      tags: [SetUp]
+ *      summary: check server is alive
+ *      description: check server is alive
+ *      responses:
+ *          200:
+ *          description: Success
+ */
 router.post('/alive', (req, res) => {
     const returnSuccessData = new SuccessResponseData(`Success`, `Alive`);
     return res.json(returnSuccessData.json);
